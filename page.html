@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button onclick="readList()">Read</button>
+    <!-- <button onclick="updateList()">Update</button> -->
+
+    <script>
+        function readList() {
+            let fdata = {}
+            fetch('http://localhost:3000/list')
+                .then((response) => response.json())
+                .then((data) => {
+                    // console.log(data);
+                    fdata = { ...data }
+                    console.log(fdata)
+
+                    const mainUL = document.createElement('ol');
+                    for (let i = 0; i < data.length; i++) {
+                        const studentLI = document.createElement('li');
+                        studentLI.innerHTML = data[i].name;
+
+                        // create list for marks
+                        const marksUL = document.createElement('ul');
+                        for (var key in data[i].empId) {
+                            const marksLI = document.createElement('li');
+                            marksLI.innerHTML = key + ': ' + data[i].empId[key];
+                            marksUL.appendChild(marksLI);
+                        }
+
+                        // append marks list to studentLI
+                        studentLI.appendChild(marksUL);
+                        // append student list to mainUL
+                        mainUL.appendChild(studentLI);
+                    }
+                    // append mainUL to body
+                    document.body.appendChild(mainUL);
+
+                });
+        }
+
+        function updateList() {
+            fetch('http://localhost:3000/list', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(...list),
+
+
+            });
+        }
+
+
+
+
+
+    </script>
+</body>
+
+</html>
+
+<!-- 
+const express = require("express");
+const cors = require("cors");
+const app = express();
+const port = 3000;
+
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500",
+  })
+);
+
+let list = [
+  { empId: "12", name: "Sonu", place: "Pune", phone: "9665593338" },
+  { empId: "22", name: "Vaishakhi", place: "Mumbai", phone: "9125593338" },
+];
+
+app.use(express.json());
+
+app.get("/list", (req, res) => {
+  res.send(list);
+});
+
+app.post("/list", (req, res) => {
+  lst = req.body;
+  list.push(lst);
+  res.send("List updated");
+});
+
+app.listen(port, () => {
+  console.log(`Server listening at http://localhost:${port}`);
+}); -->
