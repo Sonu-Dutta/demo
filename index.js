@@ -1,3 +1,10 @@
+/*
+https://azure.microsoft.com/en-in/free/search/?&ef_id=Cj0KCQjwiZqhBhCJARIsACHHEH-wBVSsLLkGiMfqMhQgftL000YMqN8dTjYOTgwxyQMtoCeN4YZMcAoaAoUdEALw_wcB:G:s&OCID=AIDcmmf1elj9v5_SEM_Cj0KCQjwiZqhBhCJARIsACHHEH-wBVSsLLkGiMfqMhQgftL000YMqN8dTjYOTgwxyQMtoCeN4YZMcAoaAoUdEALw_wcB:G:s&gclid=Cj0KCQjwiZqhBhCJARIsACHHEH-wBVSsLLkGiMfqMhQgftL000YMqN8dTjYOTgwxyQMtoCeN4YZMcAoaAoUdEALw_wcB
+
+
+*/
+
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
