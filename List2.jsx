@@ -23,7 +23,6 @@ const initialDataState = {
 const columns = [
   { field: 'Id', title: 'Id'},
   { field: 'Name', title: 'Name', },
-  //{ field: 'Description', title: 'Description', },
   { field: 'DepartmentName', title: 'Department' },
   { field: 'ComponentName', title: 'Component' },
   { field: 'GoalName', title: 'Quantity' },
@@ -41,9 +40,27 @@ const columns = [
 ];
 
 const List2 = () => {
-
   const [data, setData] = useState([]);
-  const [gridData, setGridData] = useState();
+  const [gridData, setGridData] = useState({
+    data: [],
+    initialDataState: initialDataState,
+    columns: columns.slice(0, 5), // Display only the first 5 columns by default
+    fields: Fields,
+    filterable: true,
+    NavigationState: "/Test-bench/List/Details"
+  });
+
+  const toggleColumn = (field) => {
+    const isVisible = gridData.columns.find(column => column.field === field);
+    const newColumns = isVisible
+      ? gridData.columns.filter(column => column.field !== field)
+      : [...gridData.columns, columns.find(column => column.field === field)];
+
+    setGridData({
+      ...gridData,
+      columns: newColumns
+    });
+  };
 
   const getData = async (input) => {
     if (input.Period > 0) {
@@ -52,43 +69,38 @@ const List2 = () => {
         periodId: input.Period
       }
       console.log("Get Data Called ", body);
-      var json = await getItems("TestBench", "ListTestBench", body);
+      const json = await getItems("TestBench", "ListTestBench", body);
       setData(json);
     }
-  }
-
-
-  useEffect(() => {
-    //getData();
-    setGridData({
-      data: data,
-      initialDataState: initialDataState,
-      columns: columns,
-      fields: Fields,
-      filterable: true,
-      NavigationState: "/Test-bench/List/Details"
-    })
-  }, []);
+  };
 
   useEffect(() => {
     if (data != null) {
       setGridData({
-        data: data,
-        initialDataState: initialDataState,
-        columns: columns,
-        fields: Fields,
-        filterable: true,
-        NavigationState: "/Test-bench/List/Details"
-      })
+        ...gridData,
+        data: data
+      });
     }
   }, [data]);
-
-
 
   return (
     <div className="view-main">
       <div className="basic-view">
         <Heading para={"Test Bench - List"} />
+        <div>
+          {columns.map((column, index) => (
+            <React.Fragment key={index}>
+              <input
+                type="checkbox"
+                id={column.field}
+                defaultChecked={gridData.columns.some(col => col.field === column.field)}
+                onChange={() => toggleColumn(column.field)}
+              />
+              <label htmlFor={column.field}>{column.title}</label>
+              <br />
+            </React.Fragment>
+          ))}
+        </div>
         {gridData ? (<GridList gridData={gridData} getData={getData} />) : (<div>Loading...</div>)}
       </div>
     </div>
