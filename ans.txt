@@ -41,10 +41,6 @@ const List2 = () => {
     NavigationState: "/Test-bench/List/Details"
   });
 
-  const [selectedColumns, setSelectedColumns] = useState(
-    allColumns.slice(0, 5).map((column) => column.field)
-  );
-
   const getData = async (input) => {
     if (input.Period > 0) {
       const body = {
@@ -66,8 +62,10 @@ const List2 = () => {
     }
   }, [data]);
 
+  const [selectedColumns, setSelectedColumns] = useState(allColumns.slice(0, 5).map((column) => column.field));
+
   const handleColumnChange = (selectedItems) => {
-    setSelectedColumns(selectedItems.selected.map((item) => item.field));
+    setSelectedColumns(selectedItems);
   };
 
   const multiSelectData = allColumns.map((column) => ({
@@ -84,7 +82,7 @@ const List2 = () => {
             data={multiSelectData}
             textField="text"
             dataItemKey="field"
-            value={selectedColumns.map((field) => multiSelectData.find((item) => item.field === field))}
+            value={selectedColumns}
             onChange={handleColumnChange}
           />
         </div>
