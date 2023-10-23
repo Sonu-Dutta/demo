@@ -59,7 +59,10 @@ const List2 = () => {
       <div className="basic-view">
         <Heading para={"Test Bench - List"} />
         {gridData ? (
-          <GridList gridData={gridData} getData={getData} />
+          <GridList
+            gridData={gridData}
+            getData={getData}
+          />
         ) : (
           <div>Loading...</div>
         )}
