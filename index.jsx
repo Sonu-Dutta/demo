@@ -51,6 +51,8 @@ const List2 = () => {
     NavigationState: "/Test-bench/List/Details"
   });
 
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State for the dropdown
+
   const toggleColumn = (field) => {
     const isVisible = gridData.columns.find(column => column.field === field);
     const newColumns = isVisible
@@ -89,19 +91,29 @@ const List2 = () => {
       <div className="basic-view">
         <Heading para={"Test Bench - List"} />
         <div className="checkBoxDiv">
-          {columns.map((column, index) => (
-            <React.Fragment key={index}>
-              <div className="checkBox">
-              <input
-                type="checkbox"
-                id={column.field}
-                defaultChecked={gridData.columns.some(col => col.field === column.field)}
-                onChange={() => toggleColumn(column.field)}
-              />
-              <label htmlFor={column.field}>{column.title}</label>
-              </div>
-            </React.Fragment>
-          ))}
+          <li
+            className="dropdown-li"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            Dropdown Toggle
+            <ul
+              className={`dropdown-content ${dropdownOpen ? 'show' : 'hide'}`}
+            >
+              {columns.map((column, index) => (
+                <React.Fragment key={index}>
+                  <div className="checkBox">
+                    <input
+                      type="checkbox"
+                      id={column.field}
+                      defaultChecked={gridData.columns.some(col => col.field === column.field)}
+                      onChange={() => toggleColumn(column.field)}
+                    />
+                    <label htmlFor={column.field}>{column.title}</label>
+                  </div>
+                </React.Fragment>
+              ))}
+            </ul>
+          </li>
         </div>
         {gridData ? (<GridList gridData={gridData} getData={getData} />) : (<div>Loading...</div>)}
       </div>
@@ -110,3 +122,4 @@ const List2 = () => {
 };
 
 export default List2;
+   
