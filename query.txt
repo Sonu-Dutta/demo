@@ -1,75 +1,10 @@
-This is demo.jsx
-  <label for="multiselect">Select Columns to display</label>
-    <input id="multiselect" style="width:50%" />
-    <div id="grid"></div>
-    <script>
-      var columns = [{
-        field:"OrderID",
-        filterable: false,
-        width: 70
-      },{
-        field: "Freight",
-        width: 70
-      },{
-        field: "ShipName",
-        title: "Ship Name",
-        width: 150
-      }, {
-        field: "ShipCity",
-        title: "Ship City",
-        width:300
-      }];
-
-      $("#multiselect").kendoMultiSelect({
-        dataTextField:"field",
-        dataValueField:"field",
-        dataSource: {
-          data: columns
-        },
-        value:["OrderID", "Freight", "ShipName", "ShipCity"],
-        change: function(e){
-          var cols = this.value();
-          var grid = $("#grid").data("kendoGrid");
-          grid.setOptions({columns:cols});          
-        }
-      });
-
-      $("#grid").kendoGrid({
-        dataSource: {
-          type: "odata",
-          transport: {
-            read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders"
-          },
-          schema: {
-            model: {
-              fields: {
-                OrderID: { type: "number" },
-                Freight: { type: "number" },
-                ShipName: { type: "string" },
-                ShipCity: { type: "string" }
-              }
-            }
-          },
-          pageSize: 20,
-          serverPaging: true,
-          serverFiltering: true,
-          serverSorting: true
-        },
-        height: 550,
-        filterable: true,
-        sortable: true,
-        pageable: true,
-        columns: columns
-      });
-    </script>
-
-This is List2.jsx
 import React, { useState, useEffect } from "react";
 import "@progress/kendo-theme-default/dist/all.css";
 import Heading from "../../../components/global/Heading";
 import { GridList } from "../../CommonComponents/KendoComponents";
 import { getItems } from "../../CommonComponents/KendoServices";
-import './List.css'
+import './List.css';
+import { MultiSelect } from "@progress/kendo-react-dropdowns";
 
 const Fields = [
   { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
@@ -87,7 +22,7 @@ const initialDataState = {
   skip: 0
 };
 
-const columns = [
+const allColumns = [
   { field: 'Id', title: 'Id'},
   { field: 'Name', title: 'Name', },
   { field: 'DepartmentName', title: 'Department' },
@@ -111,32 +46,22 @@ const List2 = () => {
   const [gridData, setGridData] = useState({
     data: [],
     initialDataState: initialDataState,
-    columns: columns.slice(0, 5), 
+    columns: allColumns.slice(0, 5), // Start with some default columns
     fields: Fields,
     filterable: true,
     NavigationState: "/Test-bench/List/Details"
   });
 
-  const [dropdownOpen, setDropdownOpen] = useState(false); 
-
-  const toggleColumn = (field) => {
-    const isVisible = gridData.columns.find(column => column.field === field);
-    const newColumns = isVisible
-      ? gridData.columns.filter(column => column.field !== field)
-      : [...gridData.columns, columns.find(column => column.field === field)];
-
-    setGridData({
-      ...gridData,
-      columns: newColumns
-    });
-  };
+  const [selectedColumns, setSelectedColumns] = useState(
+    allColumns.slice(0, 5).map((column) => column.field)
+  );
 
   const getData = async (input) => {
     if (input.Period > 0) {
       const body = {
         testBenchId: 0,
-        periodId: input.Period
-      }
+        periodId: input.Period,
+      };
       console.log("Get Data Called ", body);
       const json = await getItems("TestBench", "ListTestBench", body);
       setData(json);
@@ -147,47 +72,64 @@ const List2 = () => {
     if (data != null) {
       setGridData({
         ...gridData,
-        data: data
+        data: data,
       });
     }
   }, [data]);
+
+  const handleColumnChange = (selectedItems) => {
+    setSelectedColumns(selectedItems.selected.map((item) => item.field));
+  };
+
+  const multiSelectData = allColumns.map((column) => ({
+    text: column.title,
+    field: column.field,
+  }));
 
   return (
     <div className="view-main">
       <div className="basic-view">
         <Heading para={"Test Bench - List"} />
         <div className="checkBoxDiv">
-          <li
-            className="dropdown-li"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          >
-            Dropdown Toggle
-            <ul
-              className={`dropdown-content ${dropdownOpen ? 'show' : 'hide'}`}
-            >
-              {columns.map((column, index) => (
-                <React.Fragment key={index}>
-                  <div className="checkBox">
-                    <input
-                      type="checkbox"
-                      id={column.field}
-                      defaultChecked={gridData.columns.some(col => col.field === column.field)}
-                      onChange={() => toggleColumn(column.field)}
-                    />
-                    <label htmlFor={column.field}>{column.title}</label>
-                  </div>
-                </React.Fragment>
-              ))}
-            </ul>
-          </li>
+          <MultiSelect
+            data={multiSelectData}
+            textField="text"
+            dataItemKey="field"
+            value={selectedColumns.map((field) => multiSelectData.find((item) => item.field === field))}
+            onChange={handleColumnChange}
+          />
         </div>
-        {gridData ? (<GridList gridData={gridData} getData={getData} />) : (<div>Loading...</div>)}
+        {gridData ? (
+          <GridList
+            gridData={{
+              ...gridData,
+              columns: allColumns.filter((column) => selectedColumns.includes(column.field)),
+            }}
+            getData={getData}
+          />
+        ) : (
+          <div>Loading...</div>
+        )}
       </div>
     </div>
   );
 };
 
 export default List2;
-   
 
-Add the functionality of adding columns from demo.jsx to List2.jsx
+solve this error
+Uncaught runtime errors:
+×
+ERROR
+Cannot read properties of undefined (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+    at handleColumnChange (http://localhost:3002/main.8aadbae8daac572ffe09.hot-update.js:151:47)
+    at http://localhost:3002/static/js/bundle.js:56504:17
+    at Array.forEach (<anonymous>)
+    at DropDownBase.applyState (http://localhost:3002/static/js/bundle.js:56499:18)
+    at MultiSelectWithoutContext.applyState (http://localhost:3002/static/js/bundle.js:55914:15)
+    at MultiSelectWithoutContext._this.handleItemClick [as onClick] (http://localhost:3002/static/js/bundle.js:55374:13)
+    at ListItem._this.handleClick (http://localhost:3002/static/js/bundle.js:57172:26)
+    at HTMLUnknownElement.callCallback (http://localhost:3002/static/js/bundle.js:112162:18)
+    at Object.invokeGuardedCallbackDev (http://localhost:3002/static/js/bundle.js:112206:20)
+    at invokeGuardedCallback (http://localhost:3002/static/js/bundle.js:112263:35)
