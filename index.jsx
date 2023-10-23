@@ -3,7 +3,8 @@ import "@progress/kendo-theme-default/dist/all.css";
 import Heading from "../../../components/global/Heading";
 import { GridList } from "../../CommonComponents/KendoComponents";
 import { getItems } from "../../CommonComponents/KendoServices";
-import './List.css'
+import { DropDownList } from "@progress/kendo-react-dropdowns";
+import './List.css';
 
 const Fields = [
   { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
@@ -45,24 +46,20 @@ const List2 = () => {
   const [gridData, setGridData] = useState({
     data: [],
     initialDataState: initialDataState,
-    columns: columns.slice(0, 5), 
+    columns: columns.slice(0, 5),
     fields: Fields,
     filterable: true,
     NavigationState: "/Test-bench/List/Details"
   });
 
-  const [dropdownOpen, setDropdownOpen] = useState(false); // State for the dropdown
+  const [selectedColumns, setSelectedColumns] = useState(columns.map(column => column.field));
 
   const toggleColumn = (field) => {
-    const isVisible = gridData.columns.find(column => column.field === field);
-    const newColumns = isVisible
-      ? gridData.columns.filter(column => column.field !== field)
-      : [...gridData.columns, columns.find(column => column.field === field)];
+    const updatedColumns = selectedColumns.includes(field)
+      ? selectedColumns.filter(selected => selected !== field)
+      : [...selectedColumns, field];
 
-    setGridData({
-      ...gridData,
-      columns: newColumns
-    });
+    setSelectedColumns(updatedColumns);
   };
 
   const getData = async (input) => {
@@ -91,29 +88,15 @@ const List2 = () => {
       <div className="basic-view">
         <Heading para={"Test Bench - List"} />
         <div className="checkBoxDiv">
-          <li
-            className="dropdown-li"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          >
-            Dropdown Toggle
-            <ul
-              className={`dropdown-content ${dropdownOpen ? 'show' : 'hide'}`}
-            >
-              {columns.map((column, index) => (
-                <React.Fragment key={index}>
-                  <div className="checkBox">
-                    <input
-                      type="checkbox"
-                      id={column.field}
-                      defaultChecked={gridData.columns.some(col => col.field === column.field)}
-                      onChange={() => toggleColumn(column.field)}
-                    />
-                    <label htmlFor={column.field}>{column.title}</label>
-                  </div>
-                </React.Fragment>
-              ))}
-            </ul>
-          </li>
+          <DropDownList
+            data={columns}
+            textField="title"
+            dataItemKey="field"
+            value={selectedColumns}
+            onChange={(e) => setSelectedColumns(e.target.value)}
+            multiple={true}
+            tagRender={(tagData) => tagData.title}
+          />
         </div>
         {gridData ? (<GridList gridData={gridData} getData={getData} />) : (<div>Loading...</div>)}
       </div>
@@ -122,4 +105,4 @@ const List2 = () => {
 };
 
 export default List2;
-   
+  
