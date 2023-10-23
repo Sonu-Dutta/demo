@@ -1,14 +1,12 @@
-Cannot read properties of undefined (reading 'map')
-TypeError: Cannot read properties of undefined (reading 'map')
-    at handleColumnChange (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:151:47)
-    at http://localhost:3002/static/js/bundle.js:56503:17
-    at Array.forEach (<anonymous>)
-    at DropDownBase.applyState (http://localhost:3002/static/js/bundle.js:56498:18)
-    at MultiSelectWithoutContext.applyState (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:2236:15)
-    at MultiSelectWithoutContext.onTagsNavigate (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:2129:10)
-    at MultiSelectWithoutContext._this.onInputKeyDown (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:1313:22)
-    at HTMLUnknownElement.callCallback (http://localhost:3002/static/js/bundle.js:112161:18)
-    at Object.invokeGuardedCallbackDev (http://localhost:3002/static/js/bundle.js:112205:20)
-    at invokeGuardedCallback (http://localhost:3002/static/js/bundle.js:112262:35)
-
-    not able to add column in grid
+Cannot read properties of undefined (reading 'replace')
+TypeError: Cannot read properties of undefined (reading 'replace')
+    at http://localhost:3002/static/js/bundle.js:56068:58
+    at Array.map (<anonymous>)
+    at TagList.render (http://localhost:3002/static/js/bundle.js:56060:117)
+    at finishClassComponent (http://localhost:3002/static/js/bundle.js:125588:35)
+    at updateClassComponent (http://localhost:3002/static/js/bundle.js:125545:28)
+    at beginWork (http://localhost:3002/static/js/bundle.js:127171:20)
+    at HTMLUnknownElement.callCallback (http://localhost:3002/static/js/bundle.js:112162:18)
+    at Object.invokeGuardedCallbackDev (http://localhost:3002/static/js/bundle.js:112206:20)
+    at invokeGuardedCallback (http://localhost:3002/static/js/bundle.js:112263:35)
+    at beginWork$1 (http://localhost:3002/static/js/bundle.js:132137:11)
