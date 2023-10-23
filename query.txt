@@ -117,18 +117,15 @@ const List2 = () => {
 
 export default List2;
 
-solve this error
-Uncaught runtime errors:
-×
-ERROR
+on clicking the list from column , it is showing this error
 Cannot read properties of undefined (reading 'map')
 TypeError: Cannot read properties of undefined (reading 'map')
-    at handleColumnChange (http://localhost:3002/main.8aadbae8daac572ffe09.hot-update.js:151:47)
+    at handleColumnChange (http://localhost:3002/main.f756a9695e2641297cc9.hot-update.js:151:47)
     at http://localhost:3002/static/js/bundle.js:56504:17
     at Array.forEach (<anonymous>)
     at DropDownBase.applyState (http://localhost:3002/static/js/bundle.js:56499:18)
-    at MultiSelectWithoutContext.applyState (http://localhost:3002/static/js/bundle.js:55914:15)
-    at MultiSelectWithoutContext._this.handleItemClick [as onClick] (http://localhost:3002/static/js/bundle.js:55374:13)
+    at MultiSelectWithoutContext.applyState (http://localhost:3002/main.f756a9695e2641297cc9.hot-update.js:2236:15)
+    at MultiSelectWithoutContext._this.handleItemClick [as onClick] (http://localhost:3002/main.f756a9695e2641297cc9.hot-update.js:1696:13)
     at ListItem._this.handleClick (http://localhost:3002/static/js/bundle.js:57172:26)
     at HTMLUnknownElement.callCallback (http://localhost:3002/static/js/bundle.js:112162:18)
     at Object.invokeGuardedCallbackDev (http://localhost:3002/static/js/bundle.js:112206:20)
