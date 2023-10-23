@@ -1,0 +1,14 @@
+Cannot read properties of undefined (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+    at handleColumnChange (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:151:47)
+    at http://localhost:3002/static/js/bundle.js:56503:17
+    at Array.forEach (<anonymous>)
+    at DropDownBase.applyState (http://localhost:3002/static/js/bundle.js:56498:18)
+    at MultiSelectWithoutContext.applyState (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:2236:15)
+    at MultiSelectWithoutContext.onTagsNavigate (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:2129:10)
+    at MultiSelectWithoutContext._this.onInputKeyDown (http://localhost:3002/main.bc20eb88ca0c0c6df67f.hot-update.js:1313:22)
+    at HTMLUnknownElement.callCallback (http://localhost:3002/static/js/bundle.js:112161:18)
+    at Object.invokeGuardedCallbackDev (http://localhost:3002/static/js/bundle.js:112205:20)
+    at invokeGuardedCallback (http://localhost:3002/static/js/bundle.js:112262:35)
+
+    not able to add column in grid
