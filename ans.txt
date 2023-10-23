@@ -4,12 +4,6 @@ import Heading from "../../../components/global/Heading";
 import { GridList } from "../../CommonComponents/KendoComponents";
 import { getItems } from "../../CommonComponents/KendoServices";
 import './List.css';
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
-
-const Fields = [
-  { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
-  { selectedvalue: null, field: "Period", type: "dropdown", service: "Period", label: "Periods", row: 1, col: 2, span: 0, isCasscaded: true, parentValue: null },
-];
 
 const initialDataState = {
   sort: [
@@ -36,8 +30,6 @@ const List2 = () => {
     data: [],
     initialDataState: initialDataState,
     columns: allColumns.slice(0, 5), // Start with some default columns
-    fields: Fields,
-    filterable: true,
     NavigationState: "/Test-bench/List/Details"
   });
 
@@ -62,38 +54,12 @@ const List2 = () => {
     }
   }, [data]);
 
-  const [selectedColumns, setSelectedColumns] = useState(allColumns.slice(0, 5).map((column) => column.field));
-
-  const handleColumnChange = (selectedItems) => {
-    setSelectedColumns(selectedItems);
-  };
-
-  const multiSelectData = allColumns.map((column) => ({
-    text: column.title,
-    field: column.field,
-  }));
-
   return (
     <div className="view-main">
       <div className="basic-view">
         <Heading para={"Test Bench - List"} />
-        <div className="checkBoxDiv">
-          <MultiSelect
-            data={multiSelectData}
-            textField="text"
-            dataItemKey="field"
-            value={selectedColumns}
-            onChange={handleColumnChange}
-          />
-        </div>
         {gridData ? (
-          <GridList
-            gridData={{
-              ...gridData,
-              columns: allColumns.filter((column) => selectedColumns.includes(column.field)),
-            }}
-            getData={getData}
-          />
+          <GridList gridData={gridData} getData={getData} />
         ) : (
           <div>Loading...</div>
         )}
