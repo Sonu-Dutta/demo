@@ -5,10 +5,10 @@ import { GridList } from "../../CommonComponents/KendoComponents";
 import { getItems } from "../../CommonComponents/KendoServices";
 import './List.css';
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
-import { Icon } from "@progress/kendo-react-common";
 
 const Fields = [
-  // ... unchanged
+  { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
+  { selectedvalue: null, field: "Period", type: "dropdown", service: "Period", label: "Periods", row: 1, col: 2, span: 0, isCasscaded: true, parentValue: null },
 ];
 
 const initialDataState = {
@@ -23,10 +23,10 @@ const initialDataState = {
 };
 
 const allColumns = [
-  { field: 'Id', title: 'Id'},
-  { field: 'Name', title: 'Name', },
-  // ... rest of the columns
+  // ... your columns
 ];
+
+const localStorageKey = "selectedColumns"; // Key for local storage
 
 const List2 = () => {
   const [data, setData] = useState([]);
@@ -39,9 +39,11 @@ const List2 = () => {
     navigationState: "/Test-bench/List/Details"
   });
 
-  const [selectedColumns, setSelectedColumns] = useState(
-    allColumns.slice(0, 5).map((column) => column.field)
-  );
+  const [selectedColumns, setSelectedColumns] = useState(() => {
+    // Load selected columns from local storage or use default columns
+    const storedColumns = localStorage.getItem(localStorageKey);
+    return storedColumns ? JSON.parse(storedColumns) : allColumns.slice(0, 5).map((column) => column.field);
+  });
 
   const getData = async (input) => {
     if (input.Period > 0) {
@@ -56,18 +58,19 @@ const List2 = () => {
   };
 
   useEffect(() => {
-    if (data != null) {
-      setGridData({
-        ...gridData,
-        data: data,
-      });
-    }
-  }, [data]);
+    // Save selected columns to local storage whenever it changes
+    localStorage.setItem(localStorageKey, JSON.stringify(selectedColumns));
+  }, [selectedColumns]);
 
   const handleColumnChange = (event) => {
     const selectedItems = event.target.value;
     setSelectedColumns(selectedItems.map((item) => item.field));
   };
+
+  const multiSelectData = allColumns.map((column) => ({
+    text: column.title,
+    field: column.field,
+  }));
 
   return (
     <div className="view-main">
@@ -75,23 +78,11 @@ const List2 = () => {
         <Heading para={"Test Bench - List"} />
         <div className="checkBoxDiv">
           <MultiSelect
-            data={allColumns.map((column) => ({
-              text: column.title,
-              field: column.field,
-            }))}
+            data={multiSelectData}
             textField="text"
             dataItemKey="field"
-            value={selectedColumns.map((field) => ({
-              text: allColumns.find((column) => column.field === field).title,
-              field: field,
-            }))}
+            value={multiSelectData.filter(item => selectedColumns.includes(item.field))}
             onChange={handleColumnChange}
-            itemRender={({ text, ...props }) => (
-              <span>
-                {text}
-                <Icon onClick={(e) => props.onRemove(e)} className="k-icon k-i-close" />
-              </span>
-            )}
           />
         </div>
         {gridData ? (
