@@ -46,15 +46,15 @@ const List2 = () => {
   const [gridData, setGridData] = useState({
     data: [],
     initialDataState: initialDataState,
-    columns: allColumns.slice(0, 5), // Start with some default columns
+    columns: allColumns.slice(0, 5),
     fields: Fields,
     filterable: true,
     NavigationState: "/Test-bench/List/Details"
   });
 
-  const [selectedColumns, setSelectedColumns] = useState(
-    allColumns.slice(0, 5).map((column) => column.field)
-  );
+  const [selectedColumns, setSelectedColumns] = useState([
+    { text: "Select columns", field: "" }, // Placeholder item
+  ]);
 
   const getData = async (input) => {
     if (input.Period > 0) {
@@ -79,7 +79,7 @@ const List2 = () => {
 
   const handleColumnChange = (event) => {
     const selectedItems = event.target.value;
-    setSelectedColumns(selectedItems.map((item) => item.field));
+    setSelectedColumns(selectedItems);
   };
 
   const multiSelectData = allColumns.map((column) => ({
@@ -96,7 +96,7 @@ const List2 = () => {
             data={multiSelectData}
             textField="text"
             dataItemKey="field"
-            value={multiSelectData.filter(item => selectedColumns.includes(item.field))}
+            value={selectedColumns}
             onChange={handleColumnChange}
           />
         </div>
@@ -104,7 +104,9 @@ const List2 = () => {
           <GridList
             gridData={{
               ...gridData,
-              columns: allColumns.filter((column) => selectedColumns.includes(column.field)),
+              columns: allColumns.filter((column) =>
+                selectedColumns.some((item) => item.field === column.field)
+              ),
             }}
             getData={getData}
           />
