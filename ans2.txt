@@ -7,7 +7,8 @@ import './List.css';
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
 
 const Fields = [
-  // ... unchanged
+  { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
+  { selectedvalue: null, field: "Period", type: "dropdown", service: "Period", label: "Periods", row: 1, col: 2, span: 0, isCasscaded: true, parentValue: null },
 ];
 
 const initialDataState = {
@@ -22,8 +23,25 @@ const initialDataState = {
 };
 
 const allColumns = [
-  // ... unchanged
+  { field: 'Id', title: 'Id'},
+  { field: 'Name', title: 'Name', },
+  { field: 'DepartmentName', title: 'Department' },
+  { field: 'ComponentName', title: 'Component' },
+  { field: 'GoalName', title: 'GoalName' },
+  { field: 'Quantity', title: 'Quantity' },
+  { field: 'NumberofEnv', title: 'NumberofEnv' },
+  { field: 'StructureName', title: 'Structure' },
+  { field: 'OperationName', title: 'Operation' },
+  { field: 'StatusName', title: 'Status' },
+  { field: 'StatementName', title: 'Statement' },
+  { field: 'Occupancy', title: 'Occupancy' },
+  { field: 'LocationName', title: 'Location' },
+  { field: 'Startdate', title: 'StartTime' },
+  { field: 'PlannedStopTime', title: 'PlannedStopTime' },
+  { field: 'RecordingTime', title: 'Recording Date' },
 ];
+
+const localStorageKey = "selectedColumns"; // Key for local storage
 
 const List2 = () => {
   const [data, setData] = useState([]);
@@ -36,9 +54,11 @@ const List2 = () => {
     navigationState: "/Test-bench/List/Details"
   });
 
-  const [selectedColumns, setSelectedColumns] = useState(
-    allColumns.slice(0, 5).map((column) => column.field)
-  );
+  const [selectedColumns, setSelectedColumns] = useState(() => {
+    // Load selected columns from local storage or use default columns
+    const storedColumns = localStorage.getItem(localStorageKey);
+    return storedColumns ? JSON.parse(storedColumns) : allColumns.slice(0, 5).map((column) => column.field);
+  });
 
   const getData = async (input) => {
     if (input.Period > 0) {
@@ -53,13 +73,9 @@ const List2 = () => {
   };
 
   useEffect(() => {
-    if (data != null) {
-      setGridData({
-        ...gridData,
-        data: data,
-      });
-    }
-  }, [data]);
+    // Save selected columns to local storage whenever it changes
+    localStorage.setItem(localStorageKey, JSON.stringify(selectedColumns));
+  }, [selectedColumns]);
 
   const handleColumnChange = (event) => {
     const selectedItems = event.target.value;
@@ -70,17 +86,6 @@ const List2 = () => {
     text: column.title,
     field: column.field,
   }));
-
-  const tagRender = (selectedItem, tagProps) => (
-    <span {...tagProps}>
-      {selectedItem.text}
-      <span
-        onClick={() => tagProps.onRemove(selectedItem)}
-        className="k-icon k-i-close"
-        style={{ cursor: "pointer", marginLeft: "5px" }}
-      />
-    </span>
-  );
 
   return (
     <div className="view-main">
@@ -93,7 +98,6 @@ const List2 = () => {
             dataItemKey="field"
             value={multiSelectData.filter(item => selectedColumns.includes(item.field))}
             onChange={handleColumnChange}
-            tagRender={tagRender}
           />
         </div>
         {gridData ? (
