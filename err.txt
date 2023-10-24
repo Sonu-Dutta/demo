@@ -1,12 +1,3 @@
-Cannot read properties of undefined (reading 'replace')
-TypeError: Cannot read properties of undefined (reading 'replace')
-    at http://localhost:3002/static/js/bundle.js:56068:58
-    at Array.map (<anonymous>)
-    at TagList.render (http://localhost:3002/static/js/bundle.js:56060:117)
-    at finishClassComponent (http://localhost:3002/static/js/bundle.js:125588:35)
-    at updateClassComponent (http://localhost:3002/static/js/bundle.js:125545:28)
-    at beginWork (http://localhost:3002/static/js/bundle.js:127171:20)
-    at HTMLUnknownElement.callCallback (http://localhost:3002/static/js/bundle.js:112162:18)
-    at Object.invokeGuardedCallbackDev (http://localhost:3002/static/js/bundle.js:112206:20)
-    at invokeGuardedCallback (http://localhost:3002/static/js/bundle.js:112263:35)
-    at beginWork$1 (http://localhost:3002/static/js/bundle.js:132137:11)
+<span class="k-icon k-font-icon k-i-x-circle k-icon-sm" role="presentation"></span>
+
+<span class="k-icon k-svg-icon k-svg-i-x"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M416 141.3 301.3 256 416 370.7 370.7 416 256 301.3 141.3 416 96 370.7 210.7 256 96 141.3 141.3 96 256 210.7 370.7 96l45.3 45.3z"></path></svg></span>
