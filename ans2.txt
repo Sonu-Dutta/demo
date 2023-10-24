@@ -1,0 +1,115 @@
+import React, { useState, useEffect } from "react";
+import "@progress/kendo-theme-default/dist/all.css";
+import Heading from "../../../components/global/Heading";
+import { GridList } from "../../CommonComponents/KendoComponents";
+import { getItems } from "../../CommonComponents/KendoServices";
+import './List.css';
+import { MultiSelect } from "@progress/kendo-react-dropdowns";
+
+const Fields = [
+  // ... unchanged
+];
+
+const initialDataState = {
+  sort: [
+    {
+      field: "Name",
+      dir: "asc",
+    },
+  ],
+  take: 15,
+  skip: 0
+};
+
+const allColumns = [
+  // ... unchanged
+];
+
+const List2 = () => {
+  const [data, setData] = useState([]);
+  const [gridData, setGridData] = useState({
+    data: [],
+    initialDataState: initialDataState,
+    columns: allColumns.slice(0, 5),
+    fields: Fields,
+    filterable: true,
+    navigationState: "/Test-bench/List/Details"
+  });
+
+  const [selectedColumns, setSelectedColumns] = useState(
+    allColumns.slice(0, 5).map((column) => column.field)
+  );
+
+  const getData = async (input) => {
+    if (input.Period > 0) {
+      const body = {
+        testBenchId: 0,
+        periodId: input.Period,
+      };
+      console.log("Get Data Called ", body);
+      const json = await getItems("TestBench", "ListTestBench", body);
+      setData(json);
+    }
+  };
+
+  useEffect(() => {
+    if (data != null) {
+      setGridData({
+        ...gridData,
+        data: data,
+      });
+    }
+  }, [data]);
+
+  const handleColumnChange = (event) => {
+    const selectedItems = event.target.value;
+    setSelectedColumns(selectedItems.map((item) => item.field));
+  };
+
+  const multiSelectData = allColumns.map((column) => ({
+    text: column.title,
+    field: column.field,
+  }));
+
+  const tagRender = (selectedItem, tagProps) => (
+    <span {...tagProps}>
+      {selectedItem.text}
+      <span
+        onClick={() => tagProps.onRemove(selectedItem)}
+        className="k-icon k-i-close"
+        style={{ cursor: "pointer", marginLeft: "5px" }}
+      />
+    </span>
+  );
+
+  return (
+    <div className="view-main">
+      <div className="basic-view">
+        <Heading para={"Test Bench - List"} />
+        <div className="checkBoxDiv">
+          <MultiSelect
+            data={multiSelectData}
+            textField="text"
+            dataItemKey="field"
+            value={multiSelectData.filter(item => selectedColumns.includes(item.field))}
+            onChange={handleColumnChange}
+            tagRender={tagRender}
+          />
+        </div>
+        {gridData ? (
+          <GridList
+            gridData={{
+              ...gridData,
+              columns: allColumns.filter((column) => selectedColumns.includes(column.field)),
+            }}
+            getData={getData}
+          />
+        ) : (
+          <div>Loading...</div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default List2;
