@@ -5,6 +5,7 @@ import { GridList } from "../../CommonComponents/KendoComponents";
 import { getItems } from "../../CommonComponents/KendoServices";
 import './List.css';
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
+import { Icon } from "@progress/kendo-react-common";
 
 const Fields = [
   { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
@@ -52,9 +53,9 @@ const List2 = () => {
     NavigationState: "/Test-bench/List/Details"
   });
 
-  const [selectedColumns, setSelectedColumns] = useState([
-    { text: "Select columns", field: "" }, // Placeholder item
-  ]);
+  const [selectedColumns, setSelectedColumns] = useState(
+    allColumns.slice(0, 5).map((column) => column.field)
+  );
 
   const getData = async (input) => {
     if (input.Period > 0) {
@@ -79,7 +80,7 @@ const List2 = () => {
 
   const handleColumnChange = (event) => {
     const selectedItems = event.target.value;
-    setSelectedColumns(selectedItems);
+    setSelectedColumns(selectedItems.map((item) => item.field));
   };
 
   const multiSelectData = allColumns.map((column) => ({
@@ -96,17 +97,21 @@ const List2 = () => {
             data={multiSelectData}
             textField="text"
             dataItemKey="field"
-            value={selectedColumns}
+            value={multiSelectData.filter(item => selectedColumns.includes(item.field))}
             onChange={handleColumnChange}
+            itemRender={({ text, ...props }) => (
+              <span>
+                {text}
+                <Icon onClick={(e) => props.onRemove(e)} className="k-icon k-i-close" />
+              </span>
+            )}
           />
         </div>
         {gridData ? (
           <GridList
             gridData={{
               ...gridData,
-              columns: allColumns.filter((column) =>
-                selectedColumns.some((item) => item.field === column.field)
-              ),
+              columns: allColumns.filter((column) => selectedColumns.includes(column.field)),
             }}
             getData={getData}
           />
