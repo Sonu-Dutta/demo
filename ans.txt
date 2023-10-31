@@ -1,104 +1,40 @@
-import React, { useState, useEffect } from "react";
-import "@progress/kendo-theme-default/dist/all.css";
-import Heading from "../../../components/global/Heading";
-import { GridList } from "../../CommonComponents/KendoComponents";
-import { getItems } from "../../CommonComponents/KendoServices";
-import './List.css';
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
+import React from "react";
+import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
 
-const Fields = [
-  { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
-  { selectedvalue: null, field: "Period", type: "dropdown", service: "Period", label: "Periods", row: 1, col: 2, span: 0, isCasscaded: true, parentValue: null },
-];
-
-const initialDataState = {
-  sort: [
-    {
-      field: "Name",
-      dir: "asc",
-    },
-  ],
-  take: 15,
-  skip: 0
-};
-
-const allColumns = [
-  // ... your columns
-];
-
-const localStorageKey = "selectedColumns"; // Key for local storage
-
-const List2 = () => {
-  const [data, setData] = useState([]);
-  const [gridData, setGridData] = useState({
-    data: [],
-    initialDataState: initialDataState,
-    columns: allColumns.slice(0, 5),
-    fields: Fields,
-    filterable: true,
-    navigationState: "/Test-bench/List/Details"
-  });
-
-  const [selectedColumns, setSelectedColumns] = useState(() => {
-    // Load selected columns from local storage or use default columns
-    const storedColumns = localStorage.getItem(localStorageKey);
-    return storedColumns ? JSON.parse(storedColumns) : allColumns.slice(0, 5).map((column) => column.field);
-  });
-
-  const getData = async (input) => {
-    if (input.Period > 0) {
-      const body = {
-        testBenchId: 0,
-        periodId: input.Period,
-      };
-      console.log("Get Data Called ", body);
-      const json = await getItems("TestBench", "ListTestBench", body);
-      setData(json);
+const GridList = ({ gridData, getData }) => {
+  const handleColorClass = (value) => {
+    if (value === 1) {
+      return "greenCell";
+    } else if (value === 2) {
+      return "yellowCell";
+    } else if (value === 3) {
+      return "orangeCell";
+    } else if (value === 4) {
+      return "redCell";
     }
+    return "";
   };
-
-  useEffect(() => {
-    // Save selected columns to local storage whenever it changes
-    localStorage.setItem(localStorageKey, JSON.stringify(selectedColumns));
-  }, [selectedColumns]);
-
-  const handleColumnChange = (event) => {
-    const selectedItems = event.target.value;
-    setSelectedColumns(selectedItems.map((item) => item.field));
-  };
-
-  const multiSelectData = allColumns.map((column) => ({
-    text: column.title,
-    field: column.field,
-  }));
 
   return (
-    <div className="view-main">
-      <div className="basic-view">
-        <Heading para={"Test Bench - List"} />
-        <div className="checkBoxDiv">
-          <MultiSelect
-            data={multiSelectData}
-            textField="text"
-            dataItemKey="field"
-            value={multiSelectData.filter(item => selectedColumns.includes(item.field))}
-            onChange={handleColumnChange}
-          />
-        </div>
-        {gridData ? (
-          <GridList
-            gridData={{
-              ...gridData,
-              columns: allColumns.filter((column) => selectedColumns.includes(column.field)),
-            }}
-            getData={getData}
-          />
-        ) : (
-          <div>Loading...</div>
-        )}
-      </div>
-    </div>
+    <Grid
+      data={gridData.data}
+      {...gridData.initialDataState}
+      onItemChange={getData}
+    >
+      {gridData.columns.map((column) => (
+        <Column
+          key={column.field}
+          field={column.field}
+          title={column.title}
+          cell={(props) => (
+            <td className={handleColorClass(props.dataItem.JudgementWeightage)}>
+              {props.dataItem[column.field]}
+            </td>
+          )}
+        />
+      ))}
+    </Grid>
   );
 };
 
-export default List2;
+export default GridList;
