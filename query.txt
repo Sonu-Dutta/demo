@@ -90,3 +90,5 @@ const HWDetails = () => {
 };
 
 export default HWDetails;
+
+based on the weightage change the color of  { field: 'JudgementName', title: 'UserFeedback', }, 1=green, 2=yellow,3=orange, 4=red 
