@@ -1,40 +1,75 @@
-import React from "react";
-import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { GridList } from "../../../CommonComponents/KendoComponents";
 
-const GridList = ({ gridData, getData }) => {
-  const handleColorClass = (value) => {
-    if (value === 1) {
-      return "greenCell";
-    } else if (value === 2) {
-      return "yellowCell";
-    } else if (value === 3) {
-      return "orangeCell";
-    } else if (value === 4) {
-      return "redCell";
-    }
-    return "";
+const HWDetails = () => {
+  const location = useLocation();
+  const rowData = location.state?.rowData;
+  const testBenchHWJson = location.state?.testBenchlistJson.TestBenchHardwareCategory;
+
+  const columns = [
+    { field: 'HardwareCategoryName', title: 'Hardware' },
+    { field: 'HardwareSubTypeName', title: 'SubType' },
+    { field: 'Count', title: 'Piece' },
+    { field: 'JudgementName', title: 'UserFeedback' },
+    { field: 'Remark', title: 'Remark' },
+    { field: 'JudgementWeightage', title: 'Weightage' }
+  ];
+
+  const initialDataState = {
+    sort: [
+      {
+        field: "Name",
+        dir: "asc",
+      },
+    ],
+    take: 10,
+    skip: 0,
   };
 
+  const [data, setData] = useState([]);
+  const [gridData, setGridData] = useState();
+
+  const getData = async () => {
+    setData(testBenchHWJson);
+  };
+
+  const getCellClass = (dataItem) => {
+    const weightage = dataItem.JudgementWeightage;
+
+    switch (weightage) {
+      case 1:
+        return "green-cell";
+      case 2:
+        return "yellow-cell";
+      case 3:
+        return "orange-cell";
+      case 4:
+        return "red-cell";
+      default:
+        return "";
+    }
+  };
+
+  useEffect(() => {
+    getData();
+    setGridData({
+      data: data,
+      initialDataState: initialDataState,
+      columns: columns,
+      cellClass: getCellClass, // Pass the cellClass function here
+    });
+  }, [data]);
+
   return (
-    <Grid
-      data={gridData.data}
-      {...gridData.initialDataState}
-      onItemChange={getData}
-    >
-      {gridData.columns.map((column) => (
-        <Column
-          key={column.field}
-          field={column.field}
-          title={column.title}
-          cell={(props) => (
-            <td className={handleColorClass(props.dataItem.JudgementWeightage)}>
-              {props.dataItem[column.field]}
-            </td>
-          )}
-        />
-      ))}
-    </Grid>
+    <div>
+      {gridData ? (
+        <GridList gridData={gridData} />
+      ) : (
+        <div>Loading...</div>
+      )}
+    </div>
   );
 };
 
-export default GridList;
+export default HWDetails;
