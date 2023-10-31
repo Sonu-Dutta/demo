@@ -1,120 +1,92 @@
 import React, { useState, useEffect } from "react";
-import "@progress/kendo-theme-default/dist/all.css";
-import Heading from "../../../components/global/Heading";
-import { GridList } from "../../CommonComponents/KendoComponents";
-import { getItems } from "../../CommonComponents/KendoServices";
-import './List.css';
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
+import {  useLocation } from "react-router-dom";
+import { GridList } from "../../../CommonComponents/KendoComponents";
 
-const Fields = [
-  { selectedvalue: null, field: "Region", type: "dropdown", service: "Region", label: "Regions", row: 1, col: 1, span: 0, cascaded: { id: 0, field: "Period" } },
-  { selectedvalue: null, field: "Period", type: "dropdown", service: "Period", label: "Periods", row: 1, col: 2, span: 0, isCasscaded: true, parentValue: null },
-];
 
-const initialDataState = {
-  sort: [
-    {
-      field: "Name",
-      dir: "asc",
-    },
-  ],
-  take: 15,
-  skip: 0
-};
+const HWDetails = () => {
+  const location = useLocation();
+  const rowData = location.state?.rowData;
+  const testBenchHWJson = location.state?.testBenchlistJson.TestBenchHardwareCategory;
 
-const allColumns = [
-  { field: 'Id', title: 'Id'},
-  { field: 'Name', title: 'Name', },
-  { field: 'DepartmentName', title: 'Department' },
-  { field: 'ComponentName', title: 'Component' },
-  { field: 'GoalName', title: 'GoalName' },
-  { field: 'Quantity', title: 'Quantity' },
-  { field: 'NumberofEnv', title: 'NumberofEnv' },
-  { field: 'StructureName', title: 'Structure' },
-  { field: 'OperationName', title: 'Operation' },
-  { field: 'StatusName', title: 'Status' },
-  { field: 'StatementName', title: 'Statement' },
-  { field: 'Occupancy', title: 'Occupancy' },
-  { field: 'LocationName', title: 'Location' },
-  { field: 'Startdate', title: 'StartTime' },
-  { field: 'PlannedStopTime', title: 'PlannedStopTime' },
-  { field: 'RecordingTime', title: 'Recording Date' },
-];
+  const columns = [    
+    { field: 'HardwareCategoryName', title: 'Hardware', },
+    { field: 'HardwareSubTypeName', title: 'SubType', },
+    { field: 'Count', title: 'Piece', },
+    { field: 'JudgementName', title: 'UserFeedback', },
+    { field: 'Remark', title: 'Remark', },
+    {field:'JudgementWeightage',title:"weightage"}
+  ]
 
-const List2 = () => {
+  const initialDataState = {
+    sort: [
+      {
+        field: "Name",
+        dir: "asc",
+      },
+    ],
+    take: 10,
+    skip: 0
+  };
+
   const [data, setData] = useState([]);
-  const [gridData, setGridData] = useState({
-    data: [],
-    initialDataState: initialDataState,
-    columns: allColumns.slice(0, 5), 
-    fields: Fields,
-    filterable: true,
-    navigationState: "/Test-bench/List/Details"
-  });
+  const [gridData, setGridData] = useState(); 
 
-  const [selectedColumns, setSelectedColumns] = useState(
-    allColumns.slice(0, 5).map((column) => column.field)
-  );
 
-  const getData = async (input) => {
-    if (input.Period > 0) {
-      const body = {
-        testBenchId: 0,
-        periodId: input.Period,
-      };
-      console.log("Get Data Called ", body);
-      const json = await getItems("TestBench", "ListTestBench", body);
+  const getData = async (input) => { 
+    //debugger;  
+      var json = testBenchHWJson;
       setData(json);
+      for(let i = 0; i < json.length; i++)
+{
+      console.log("length ",json.length," data weightage ",json[i].JudgementWeightage)
+      // if(json[i].JudgementWeightage==1){
+      //   let value = document.getElementsByClassName("k-grid");
+      //   console.log(value, "Value of classname")
+      //   if (value == "newStyle") {
+      //     value= "k-grid";
+      //   } else {
+      //     value = "newStyle";
+      //   }
+      //   console.log(value, "Value of classname")
+      // }
+ }
+
     }
-  };
+  
 
-  useEffect(() => {
-    if (data != null) {
-      setGridData({
-        ...gridData,
-        data: data,
-      });
-    }
-  }, [data]);
+    useEffect(() => {  
+      getData();  
+      console.log("Initial State Navigate")
+      setGridData({ 
+        data: data,    
+        initialDataState: initialDataState,
+        columns: columns
+      
+      })
+    }, []);
+  
+    useEffect(() => {    
+      if (data != null) {
+        console.log("Navigate")
+       // debugger;
+        setGridData({
+          data: data,
+          initialDataState: initialDataState,
+          columns: columns,        
+          NavigationState: ""
+        })
+      }
+    }, [data]);
+  
+    // const handleGoBack = () => {
+    //   navigate(-1);
+    // };
 
-  const handleColumnChange = (event) => {
-    const selectedItems = event.target.value;
-    setSelectedColumns(selectedItems.map((item) => item.field));
-  };
-
-  const multiSelectData = allColumns.map((column) => ({
-    text: column.title,
-    field: column.field,
-  }));
-
-  return (
-    <div className="view-main">
-      <div className="basic-view">
-        <Heading para={"Test Bench - List"} />
-        <div className="checkBoxDiv">
-          <MultiSelect
-            data={multiSelectData}
-            textField="text"
-            dataItemKey="field"
-            value={multiSelectData.filter(item => selectedColumns.includes(item.field))}
-            onChange={handleColumnChange}
-          />
-        </div>
-        {gridData ? (
-          <GridList
-            gridData={{
-              ...gridData,
-              columns: allColumns.filter((column) => selectedColumns.includes(column.field)),
-            }}
-            getData={getData}
-          />
-        ) : (
-          <div>Loading...</div>
-        )}
-      </div>
-    </div>
-  );
+    return (
+      <div>
+          {gridData ? (<GridList gridData={gridData} getData={getData}/>) : (<div>Loading...</div>)}
+       </div>
+     )
 };
 
-export default List2;
-
+export default HWDetails;
